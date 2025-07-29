@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:social_media_app/features/auth/presentation/cubits/auth_cubit.dart';
 import 'package:social_media_app/features/auth/presentation/widgets/my_log_button.dart';
 import 'package:social_media_app/features/auth/presentation/widgets/my_text_field.dart';
 
@@ -16,6 +18,32 @@ class _LogInPageState extends State<SignUpPage> {
 
   final pwController = TextEditingController();
   final confirmPwController = TextEditingController();
+
+  void signUp() {
+    final name = nameController.text;
+    final email = emailController.text;
+    final pw = pwController.text;
+    final confirmPw = confirmPwController.text;
+
+    final authCubit = context.read<AuthCubit>();
+
+    if (name.isNotEmpty &&
+        email.isNotEmpty &&
+        pw.isNotEmpty &&
+        confirmPw.isNotEmpty) {
+      if (pw != confirmPw) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('password doesnt match')));
+      } else {
+        authCubit.register(name, email, pw);
+      }
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('pls enter all fields')));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +94,7 @@ class _LogInPageState extends State<SignUpPage> {
                 ),
                 const SizedBox(height: 20),
 
-                MyLogButton(text: 'SIGN UP'),
+                MyLogButton(text: 'SIGN UP', onTap: signUp),
                 const SizedBox(height: 20),
 
                 Text(

@@ -9,6 +9,8 @@ import 'package:social_media_app/features/auth/presentation/cubits/auth_states.d
 import 'package:social_media_app/features/auth/presentation/pages/log_in_page.dart';
 import 'package:social_media_app/features/auth/presentation/pages/sign_up_page.dart';
 import 'package:social_media_app/features/homepage/presentaion/home_page.dart';
+import 'package:social_media_app/features/profile/data/firebase_profile_repo.dart';
+import 'package:social_media_app/features/profile/presentation/cubits/profile_cubit.dart';
 import 'package:social_media_app/firebase_options.dart';
 
 void main() async {
@@ -19,12 +21,16 @@ void main() async {
 
 class MainApp extends StatelessWidget {
   final authRepo = FirebaseAuthRepo();
+  final profileRepo = FirebaseProfileRepo();
   MainApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AuthCubit(authRepo)..authCheck(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => AuthCubit(authRepo)..authCheck()),
+        BlocProvider(create: (context) => ProfileCubit(profileRepo)),
+      ],
       child: MaterialApp(
         initialRoute: '/login',
         routes: {
